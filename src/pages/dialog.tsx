@@ -1,92 +1,14 @@
-import "./App.css";
-
-import {
-  Sidebar,
-  SidebarMenu,
-  SidebarGroupContent,
-  SidebarContent,
-  SidebarProvider,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenuItem,
-  SidebarMenuButton
-} from "@/components/ui/sidebar";
-
-import { Input } from "@/components/ui/input";
-
-import { Button } from "./components/ui/button";
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { User } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 
-import { User, Home, Settings, TabletSmartphone } from "lucide-react";
+export default function SignIn() {
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Homes from "./pages/home";
-import Category from "./pages/category";
-import Setting from "./pages/settings";
-
-import { Link } from "react-router-dom";
-
-const router = createBrowserRouter([
-  { path: "/home", element: <Homes /> },
-  { path: "/category", element: <Category /> },
-  { path: "/settings", element: <Setting /> },
-]);
-
-const projects = [
-  {
-    name: "Home",
-    url: "/home",
-    icon: Home,
-  },
-  {
-    name: "Category",
-    url: "/category",
-    icon: TabletSmartphone
-  },
-  {
-    name: "Settings",
-    url: "/settings",
-    icon: Settings
-  }
-];
-{projects.map((item) => (
-  <Link 
-    key={item.url} 
-    to={item.url} 
-    className="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"
-  >
-    <item.icon className="w-5 h-5" />
-    {item.name}
-  </Link>
-))}
-
-function App() {
-  return (
-    <>
-    ;
-      <SidebarProvider>
-        <div>        
-          <Sidebar>
-            <SidebarContent>
-              <SidebarGroup>
-                <SidebarGroupLabel>Stock Management System</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {projects.map(project => (
-                      <SidebarMenuItem key={project.name}>
-                        <SidebarMenuButton asChild>
-                          <a href={project.url}>
-                            <project.icon />
-                            <span>{project.name}</span>
-                          </a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                    {/* sign in dialog */}
-                    <Dialog>
+    return(
+        <>
+         <Dialog>
                       <DialogTrigger className="ml-1.5 mt-5 text-sm font-medium text-gray-600 hover:text-gray-900 cursor-pointer flex items-center  gap-0.5 ">
                         <User className="w-5 h-5" />
                         <span>Sign in</span>
@@ -133,17 +55,6 @@ function App() {
                         </DialogHeader>
                       </DialogContent>
                     </Dialog>
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            </SidebarContent>
-          </Sidebar>
-        </div>
-        <RouterProvider router={router} />
-      </SidebarProvider>
-      
-    </>
-  );
+        </>
+    )
 }
-
-export default App;
