@@ -44,15 +44,31 @@ export default function Contactus() {
               className="mt-3 border-3 border-gray-400"
               placeholder="Type your message here."
               value={form.message}
-              onChange={(e) => setForm({...form, message: e.target.value})}
+              onChange={(e) => setForm({ ...form, message: e.target.value })}
             />
             <div className="flex gap-1 mt-3">
-              <Input type="text" placeholder="Full name" value={form.name} onChange={(e) => setForm({ ...form, name:e.target.value})} />
-              <Input type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({...form, email:e.target.value})} />
+              <Input
+                type="text"
+                placeholder="Full name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+              <Input
+                type="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
             </div>
-            <Button className="mt-2" disabled={status == "sending"}>send</Button>
-            {status == "ok" && <p className="text-emerald-600">Message sent ✅</p>}
-            {status == "error" && <p className="text-red-600">Failed to send ❌</p>}
+            <Button className="mt-2" disabled={status == "sending"}>
+              send
+            </Button>
+            {status == "ok" && (
+              <p className="text-emerald-600">Message sent ✅</p>
+            )}
+            {status == "error" && (
+              <p className="text-red-600">Failed to send ❌</p>
+            )}
           </form>
         </div>
       </div>
