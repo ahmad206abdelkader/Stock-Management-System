@@ -44,7 +44,7 @@ export default function Dashboard() {
         <div id="contact-us">
         <Contactus />
         </div>
-        <div>
+        <div id="about">
           <About />
         </div>
       </div>

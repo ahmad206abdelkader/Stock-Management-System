@@ -45,7 +45,7 @@ export default function Header() {
                     Got a question or need help? Contact us today
                   </ListItem>
 
-                  <ListItem href="/about" title="About">
+                  <ListItem href="#about" title="About">
                     Discover who we are and what we stand for
                   </ListItem>
                 </ul>
@@ -57,7 +57,7 @@ export default function Header() {
                 <ul className="grid w-[200px] gap-4">
                   <li>
                     <NavigationMenuLink asChild>
-                      <Link to="/about">Test</Link>
+                      <Link to="#about">Test</Link>
                     </NavigationMenuLink>
                     <NavigationMenuLink asChild>
                       <Link to="#">Test</Link>
