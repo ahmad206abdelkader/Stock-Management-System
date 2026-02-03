@@ -50,6 +50,21 @@ app.post("/api/products", async (req, res) => {
   res.status(201).json(product);
 });
 
+app.post("/api/categories", async (req, res) => {
+  const { name } = req.body;
+  if (!name) return res.status(400).json({ error: "Category name is required" });
+
+  try {
+    const category = await prisma.category.create({
+      data: { name },
+    });
+    res.status(201).json(category);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to create category" });
+  }
+});
+
 app.patch("/api/products/:id", async (req, res) => {
   const id = Number(req.params.id);
   const { name, price, count, categoryId } = req.body;
@@ -83,6 +98,26 @@ app.post("/api/products/:id/decrement", async (req, res) => {
 });
 
 
+app.patch("/api/products/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const { name, price, count } = req.body;
+  
+  try {
+    const product = await prisma.product.update({
+      where: { id },
+      data: { 
+        name, 
+        price: Number(price), 
+        count: Number(count) 
+      },
+    });
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ error: "Update failed" });
+  }
+});
+
+
 ////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////
@@ -112,6 +147,24 @@ transporter.verify((err, success) => {
 // Health check
 app.get("/", (_req, res) => {
   res.send("Server is running 🚀");
+});
+
+app.delete("/api/products/name/:name", async (req, res) => {
+  const { name } = req.params;
+  await prisma.product.deleteMany({ where: {name: name}});
+  res.json({ message: "product delete"});
+});
+
+app.delete("/api/categories/name/:name", async (req, res) => { // تأكد إنها api مش app
+  const { name } = req.params;
+  try {
+    await prisma.category.deleteMany({
+      where: { name: name }
+    });
+    res.json({ message: "Category deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
 // Contact endpoint

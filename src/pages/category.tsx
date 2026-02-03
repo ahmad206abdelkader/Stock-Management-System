@@ -84,7 +84,7 @@ export default function CategoryPage() {
     setLoading(true);
     try {
       let category = categories.find(
-        (c) => c.name.toLowerCase() === catName.toLowerCase()
+        (c) => c.name.toLowerCase() === catName.toLowerCase(),
       );
 
       if (!category) {
@@ -147,10 +147,74 @@ export default function CategoryPage() {
 
   const grandTotal = useMemo(
     () => rows.reduce((s, r) => s + r.total, 0),
-    [rows]
+    [rows],
   );
 
-  
+  const [deleteName, setDeleteName] = useState("");
+
+  const handleDelete = async (type: "category" | "product") => {
+    if (!deleteName.trim()) return alert("Please enter a name to delete");
+
+    if (!confirm(`Are you sure you want to delete this ${type}?`)) return;
+
+    setLoading(true);
+    try {
+      const endpoint =
+        type === "category"
+          ? `${API}/api/categories/name/${deleteName}`
+          : `${API}/api/products/name/${deleteName}`;
+
+      const res = await fetch(endpoint, { method: "DELETE" });
+
+      if (!res.ok) throw new Error("Delete failed - Name might not exist");
+
+      alert(`${type} deleted successfully`);
+      setDeleteName("");
+      await load();
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const [selectedProductId, setSelectedProductId] = useState<string>("");
+  const [editForm, setEditForm] = useState({ name: "", price: 0, count: 0 });
+
+  const handleSelectProduct = (id: string) => {
+    setSelectedProductId(id);
+    const product = rows.find((r) => r.id === id);
+    if (product) {
+      setEditForm({
+        name: product.product,
+        price: product.price,
+        count: product.count,
+      });
+    }
+  };
+
+  const handleUpdate = async () => {
+  if (!selectedProductId) return;
+  const [catId, prodId] = selectedProductId.split('-'); // فك الـ id المركب
+
+  setLoading(true);
+  try {
+    const res = await fetch(`${API}/api/products/${prodId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(editForm),
+    });
+
+    if (!res.ok) throw new Error("Update failed");
+
+    alert("Product updated!");
+    await load();
+  } catch (err: any) {
+    alert(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <>
@@ -217,15 +281,94 @@ export default function CategoryPage() {
                       }))
                     }
                     min={0}
-                    
                   />
                 </div>
               </div>
-              <Button type="submit" disabled={loading}>
-                conform{loading ? "Saving..." : "Save"}
+              <Button type="submit" disabled={loading} className=" mt-3">
+                Conform {loading ? "Saving..." : "Save"}
               </Button>
             </Form>
           </div>
+
+          <div className="grid gap-3 ml-10 p-4 border rounded-lg bg-red-50/10 mt-6">
+            <h2 className="text-xl font-semibold text-red-600">Delete Items</h2>
+            <div className="flex gap-4 items.end">
+              <div>
+                <span>Enter Name to Delete:</span>
+                <Input
+                  type="test"
+                  placeholder="Category or product Name"
+                  value={deleteName}
+                  onChange={(e) => setDeleteName(e.target.value)}
+                  className="border-red-300"
+                />
+              </div>
+              <Button
+                variant="destructive"
+                onClick={() => handleDelete("product")}
+                disabled={loading}
+              >
+                Delete Product
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => handleDelete("category")}
+                disabled={loading}
+              >
+                Delete Category
+              </Button>
+            </div>
+          </div>
+
+
+          <div className="grid gap-3 ml-10 p-4 border rounded-lg bg-blue-50/10 mt-6">
+  <h2 className="text-xl font-semibold text-blue-600">Edit Product</h2>
+  <div className="flex flex-wrap gap-4 items-end">
+    <div>
+      <span>Select Product:</span>
+      <select 
+        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+        value={selectedProductId}
+        onChange={(e) => handleSelectProduct(e.target.value)}
+      >
+        <option value="">-- Choose Product --</option>
+        {rows.map(r => (
+          <option key={r.id} value={r.id}>{r.category} - {r.product}</option>
+        ))}
+      </select>
+    </div>
+
+    {selectedProductId && (
+      <>
+        <div>
+          <span>New Name:</span>
+          <Input 
+            value={editForm.name} 
+            onChange={e => setEditForm({...editForm, name: e.target.value})} 
+          />
+        </div>
+        <div>
+          <span>New Price:</span>
+          <Input 
+            type="number"
+            value={editForm.price} 
+            onChange={e => setEditForm({...editForm, price: Number(e.target.value)})} 
+          />
+        </div>
+        <div>
+          <span>New Count:</span>
+          <Input 
+            type="number"
+            value={editForm.count} 
+            onChange={e => setEditForm({...editForm, count: Number(e.target.value)})} 
+          />
+        </div>
+        <Button onClick={handleUpdate} disabled={loading}>Update Changes</Button>
+      </>
+    )}
+  </div>
+</div>
+
           <div className="ml-9 mt-9" id="tabels">
             <Table>
               <TableCaption>
@@ -247,21 +390,28 @@ export default function CategoryPage() {
                     <TableCell>{r.product}</TableCell>
                     <TableCell>{r.count}</TableCell>
                     <TableCell>{r.price}</TableCell>
-                    <TableCell className="text-right">{r.total.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">
+                      {r.total.toFixed(2)}
+                    </TableCell>
                   </TableRow>
                 ))}
                 {rows.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground">
-                    {loading ? "Loading..." : "No products yet"}
-                  </TableCell>
-                </TableRow>
-              )}
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      className="text-center text-muted-foreground"
+                    >
+                      {loading ? "Loading..." : "No products yet"}
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
               <TableFooter>
                 <TableRow>
                   <TableCell colSpan={4}>total</TableCell>
-                  <TableCell className="text-right">{grandTotal.toFixed(2)}</TableCell>
+                  <TableCell className="text-right">
+                    {grandTotal.toFixed(2)}
+                  </TableCell>
                 </TableRow>
               </TableFooter>
             </Table>
