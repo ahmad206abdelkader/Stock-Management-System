@@ -1,7 +1,13 @@
+import { UserProfile } from "@clerk/clerk-react";
+
+
 export default function ProfileMenu() {
   return (
     <>
-      <div>Profile</div>
+      <div className="flex justify-center items-center py-10">
+      
+      <UserProfile routing="hash" />
+    </div>
     </>
   );
 }

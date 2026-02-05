@@ -22,22 +22,28 @@ app.use(
 //////////////////////////////////
 /////////////////////////////////
 ///////////////////////////////////
-app.get("/api/categories", async (_req, res) => {
+app.get("/api/categories", async (req, res) => {
+  const { userId } = req.query; // استلام المعرف من الرابط (Query Param)
+  
+  if (!userId) {
+    return res.status(400).json({ error: "userId is required to fetch data" });
+  }
+
   const cats = await prisma.category.findMany({
+    where: { userId: String(userId) }, // فلترة حسب المستخدم
     include: { products: true },
     orderBy: { id: "desc" }
-  })
+  });
 
   const result = cats.map(c => {
     const totalValue = c.products.reduce((sum, p) => {
       const price = Number(p.price);
       return sum + price * p.count;
     } , 0);
-    return{ ...c, totalValue}
-    
-  })
-  res.json(result)
-})
+    return { ...c, totalValue };
+  });
+  res.json(result);
+});
 
 app.post("/api/products", async (req, res) => {
   const { name, price, count = 0, categoryId } = req.body;
@@ -51,17 +57,16 @@ app.post("/api/products", async (req, res) => {
 });
 
 app.post("/api/categories", async (req, res) => {
-  const { name } = req.body;
-  if (!name) return res.status(400).json({ error: "Category name is required" });
+  const { name, userId } = req.body; // استلام userId من Body
+  if (!name || !userId) return res.status(400).json({ error: "Name and userId required" });
 
   try {
     const category = await prisma.category.create({
-      data: { name },
+      data: { name, userId },
     });
     res.status(201).json(category);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to create category" });
+    res.status(500).json({ error: "Failed to create category (Maybe name exists for this user)" });
   }
 });
 
@@ -155,11 +160,18 @@ app.delete("/api/products/name/:name", async (req, res) => {
   res.json({ message: "product delete"});
 });
 
-app.delete("/api/categories/name/:name", async (req, res) => { // تأكد إنها api مش app
+app.delete("/api/categories/name/:name", async (req, res) => {
   const { name } = req.params;
+  const { userId } = req.query; // نمرر الـ userId للتأكد
+
+  if (!userId) return res.status(400).json({ error: "userId required" });
+
   try {
     await prisma.category.deleteMany({
-      where: { name: name }
+      where: { 
+        name: name,
+        userId: String(userId) // ضمان عدم حذف تصنيف مستخدم آخر بنفس الاسم
+      }
     });
     res.json({ message: "Category deleted" });
   } catch (error) {

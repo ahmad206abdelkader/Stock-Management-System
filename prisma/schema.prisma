@@ -13,12 +13,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+
 model Category {
   id        Int      @id @default(autoincrement())
-  name     String   @unique
+  name      String   
+  userId    String   
   products  Product[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([name, userId]) 
 }
 
 model Product {
