@@ -33,7 +33,7 @@ type Category = {
 
 type Row = { id: string; product: string; category: string; count: number; price: number; total: number };
 
-const API = "http://localhost:8000";
+const API = window.location.origin;
 
 const chartConfig = {
   count: {

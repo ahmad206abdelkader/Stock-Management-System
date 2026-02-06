@@ -36,10 +36,10 @@ type Category = {
   totalValue?: number;
 };
 
-const API = "http://localhost:8000";
+const API = window.location.origin;
 
 export default function CategoryPage() {
-  const { userId } = useAuth(); // 1. جلب معرف المستخدم
+  const { userId } = useAuth(); 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [form, setForm] = useState({

@@ -21,11 +21,11 @@ type Category = {
 export default function Header() {
   const { userId } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
-  const API = "http://localhost:8000";
+  const API = window.location.origin;
 
   useEffect(() => {
     if (userId) {
-      // التصحيح هنا: إضافة علامة $ قبل {API}
+     
       fetch(`${API}/api/categories?userId=${userId}`)
         .then((res) => {
           if (!res.ok) throw new Error("Network response was not ok");
@@ -38,14 +38,14 @@ export default function Header() {
         })
         .catch((err) => console.error("Header fetch error:", err));
     }
-  }, [userId, API]); // أضفنا API للمصفوفة لضمان الدقة
+  }, [userId, API]);
 
   return (
     <>
       <div className="w-full">
         <NavigationMenu>
           <NavigationMenuList>
-            {/* القائمة الرئيسية: Home */}
+           
             <NavigationMenuItem>
               <NavigationMenuTrigger>Home</NavigationMenuTrigger>
               <NavigationMenuContent>
@@ -76,7 +76,7 @@ export default function Header() {
               </NavigationMenuContent>
             </NavigationMenuItem>
 
-            {/* القائمة الديناميكية: Category */}
+           
             <NavigationMenuItem>
               <NavigationMenuTrigger>Category</NavigationMenuTrigger>
               <NavigationMenuContent>
@@ -103,7 +103,7 @@ export default function Header() {
               </NavigationMenuContent>
             </NavigationMenuItem>
 
-            {/* قائمة الـ Chart */}
+           
             <NavigationMenuItem>
               <NavigationMenuTrigger>Chart</NavigationMenuTrigger>
               <NavigationMenuContent>
@@ -119,7 +119,7 @@ export default function Header() {
               </NavigationMenuContent>
             </NavigationMenuItem>
 
-            {/* قائمة البروفايل */}
+            
             <NavigationMenuItem>
               <NavigationMenuTrigger>Profile Menu</NavigationMenuTrigger>
               <NavigationMenuContent>
