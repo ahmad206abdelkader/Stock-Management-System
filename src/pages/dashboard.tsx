@@ -18,7 +18,7 @@ type Category = {
   products: Product[];
 };
 
-const API = window.location.origin;
+const API = "";
 
 export default function Dashboard() {
   const { userId } = useAuth(); 

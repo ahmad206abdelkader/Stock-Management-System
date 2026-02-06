@@ -36,7 +36,7 @@ type Category = {
   totalValue?: number;
 };
 
-const API = window.location.origin;
+const API = "";
 
 export default function CategoryPage() {
   const { userId } = useAuth(); 

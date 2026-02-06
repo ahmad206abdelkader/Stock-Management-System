@@ -33,7 +33,7 @@ type Category = {
 
 type Row = { id: string; product: string; category: string; count: number; price: number; total: number };
 
-const API = window.location.origin;
+const API = "";
 
 const chartConfig = {
   count: {
@@ -47,19 +47,19 @@ const chartConfig = {
 };
 
 export default function Chart() {
-   const { userId } = useAuth(); // 1. جلب الـ userId
+   const { userId } = useAuth(); 
    const [loading, setLoading] = useState(false);
    const [categories, setCategories] = useState<Category[]>([]);
 
    const load = async () => {
-    if (!userId) return; // 2. لا تطلب البيانات إذا لم يتم التعرف على المستخدم
+    if (!userId) return; 
     setLoading(true);
     try {
-      // 3. إضافة userId إلى الرابط
+
       const res = await fetch(`${API}/api/categories?userId=${userId}`);
       const data = await res.json();
 
-      // 4. التأكد أن البيانات مصفوفة Array قبل العمل عليها
+      
       if (Array.isArray(data)) {
         const normalized = data.map((c: Category) => ({
           ...c,
@@ -84,7 +84,7 @@ export default function Chart() {
     if (userId) {
       load();
     }
-  }, [userId]); // التحديث عند تغير المستخدم
+  }, [userId]); 
 
   const rows: Row[] = useMemo(() => {
     const out: Row[] = [];

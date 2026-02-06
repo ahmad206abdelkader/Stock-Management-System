@@ -21,7 +21,7 @@ type Category = {
 export default function Header() {
   const { userId } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
-  const API = window.location.origin;
+ const API = "";
 
   useEffect(() => {
     if (userId) {
